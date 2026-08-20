@@ -1,11 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 3 of the License, or
-#  (at your option) any later version.
-#
-# ##### END GPL LICENSE BLOCK #####
+# SPDX-License-Identifier: MIT
 
 import bpy
 from bpy.props import EnumProperty
@@ -76,7 +69,7 @@ COLLIDER_TYPES = (
         "CONVEX",
         "Convex",
         "Create a convex hull collider from the selection",
-        "CONVEXHULL",
+        "MESH_ICOSPHERE",
         8,
     ),
 )
@@ -127,15 +120,15 @@ class QUICKCOLLISION_OT_create(Operator):
 
         settings = prefs(context)
         prefix = getattr(settings, _PREFIX_ATTR[self.collider_type])
-        name = primitives.unique_object_name(f"{prefix}{source.name}{settings.suffix}")
+        name = primitives.collider_name(prefix, source.name, settings.suffix)
 
         try:
-            obj, tri_count = self._create(context, points, source, name)
+            obj, hull_stats = self._create(context, points, source, name, settings)
         except Exception as exc:
             self.report({"ERROR"}, str(exc))
             return {"CANCELLED"}
 
-        primitives.apply_collider_look(obj)
+        primitives.apply_collider_look(obj, settings.wire_display)
 
         if settings.parent_to_source:
             primitives.parent_keep_world(obj, source)
@@ -146,21 +139,24 @@ class QUICKCOLLISION_OT_create(Operator):
 
         primitives.select_only(context, obj)
 
-        if tri_count is not None:
-            context.window_manager.quickcollision_last_tris = tri_count
+        if hull_stats is not None:
+            vert_count, tri_count = hull_stats
             if tri_count > MAX_CONVEX_TRIS:
                 self.report(
                     {"WARNING"},
                     f"Convex collider has {tri_count} triangles (limit {MAX_CONVEX_TRIS})",
                 )
             else:
-                self.report({"INFO"}, f"Convex collider: {tri_count} triangles")
+                self.report(
+                    {"INFO"},
+                    f"Convex collider: {vert_count} verts, {tri_count} triangles",
+                )
         else:
             self.report({"INFO"}, f"Created {obj.name}")
 
         return {"FINISHED"}
 
-    def _create(self, context, points, source, name):
+    def _create(self, context, points, source, name, settings):
         kind = self.collider_type
 
         if kind == "SPHERE":
@@ -171,7 +167,13 @@ class QUICKCOLLISION_OT_create(Operator):
         if kind == "CONVEX":
             if len(points) < 3:
                 raise RuntimeError("Convex hull needs at least 3 points")
-            return primitives.make_convex(context, name, points)
+            return primitives.make_convex(
+                context,
+                name,
+                points,
+                settings.convex_max_verts,
+                settings.convex_skin_width,
+            )
 
         if kind == "BOX_WORLD":
             axes = geometry.world_axes()

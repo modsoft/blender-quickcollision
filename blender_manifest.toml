@@ -12,7 +12,7 @@ website = "https://github.com/modsoft/blender-quickcollision"
 blender_version_min = "4.2.0"
 
 license = [
-  "SPDX:GPL-3.0-or-later",
+  "SPDX:MIT",
 ]
 
 [build]
@@ -20,6 +20,7 @@ paths_exclude_pattern = [
   "__pycache__/",
   ".*",
   "tests/",
+  "native/",
   "*.blend",
   "*.blend1",
   "*.zip",

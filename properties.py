@@ -1,17 +1,21 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 3 of the License, or
-#  (at your option) any later version.
-#
-# ##### END GPL LICENSE BLOCK #####
+# SPDX-License-Identifier: MIT
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty
+from bpy.props import BoolProperty, FloatProperty, IntProperty, StringProperty
 from bpy.types import AddonPreferences
 
-from .constants import DEFAULT_COLLECTION, REPOSITORY_URL
+from .constants import DEFAULT_COLLECTION, MAT_NAME, REPOSITORY_URL
+
+
+def _update_wire_display(self, context):
+    """Flip display mode on every existing collider, not just new ones."""
+    mat = bpy.data.materials.get(MAT_NAME)
+    if mat is None:
+        return
+    display = "WIRE" if self.wire_display else "TEXTURED"
+    for obj in bpy.data.objects:
+        if obj.type == "MESH" and mat.name in obj.data.materials:
+            obj.display_type = display
 
 
 class QuickCollisionPreferences(AddonPreferences):
@@ -37,10 +41,35 @@ class QuickCollisionPreferences(AddonPreferences):
         default="UCX_",
         description="Name prefix for convex colliders",
     )
+    convex_max_verts: IntProperty(
+        name="Max Verts",
+        default=32,
+        min=4,
+        soft_max=256,
+        max=1024,
+        description=(
+            "Vertex budget for convex hulls. StanHull keeps the most "
+            "shape-defining vertices and discards the rest"
+        ),
+    )
+    convex_skin_width: FloatProperty(
+        name="Skin Width",
+        default=0.0,
+        min=0.0,
+        soft_max=1.0,
+        subtype="DISTANCE",
+        description=(
+            "Inflate the convex hull outward by roughly this distance so the "
+            "simplified hull still encloses the source surface"
+        ),
+    )
     suffix: StringProperty(
         name="Suffix",
-        default="",
-        description="Optional suffix appended to every collider name",
+        default="_00",
+        description=(
+            "Suffix appended to every collider name. A numeric suffix like "
+            "_00 counts up automatically when the name is already taken"
+        ),
     )
     parent_to_source: BoolProperty(
         name="Parent to Source",
@@ -57,6 +86,12 @@ class QuickCollisionPreferences(AddonPreferences):
         default=DEFAULT_COLLECTION,
         description="Collection that colliders are moved into",
     )
+    wire_display: BoolProperty(
+        name="Wireframe Display",
+        default=False,
+        update=_update_wire_display,
+        description="Show colliders as wireframe so they never hide the source mesh",
+    )
 
     def draw(self, context):
         layout = self.layout
@@ -64,11 +99,14 @@ class QuickCollisionPreferences(AddonPreferences):
         row = layout.row(align=True)
         row.prop(self, "use_collection")
         row.prop(self, "collection_name", text="")
+        layout.prop(self, "wire_display")
         layout.separator()
         layout.prop(self, "box_prefix")
         layout.prop(self, "sphere_prefix")
         layout.prop(self, "capsule_prefix")
         layout.prop(self, "convex_prefix")
+        layout.prop(self, "convex_max_verts")
+        layout.prop(self, "convex_skin_width")
         layout.prop(self, "suffix")
         layout.separator()
         link = layout.operator("wm.url_open", text="GitHub Repository", icon="URL")
@@ -88,15 +126,12 @@ classes = (QuickCollisionPreferences,)
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.WindowManager.quickcollision_last_tris = IntProperty(
-        name="Last Convex Tris",
-        default=0,
-        min=0,
-    )
 
 
 def unregister():
-    if hasattr(bpy.types.WindowManager, "quickcollision_last_tris"):
-        del bpy.types.WindowManager.quickcollision_last_tris
+    # Clean up readout properties left behind by older versions.
+    for attr in ("quickcollision_last_tris", "quickcollision_last_verts"):
+        if hasattr(bpy.types.WindowManager, attr):
+            delattr(bpy.types.WindowManager, attr)
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
