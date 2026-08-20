@@ -4,6 +4,7 @@ __pycache__/
 native/build/
 *.lib
 *.exp
+tests/
 *.blend1
 .DS_Store
 .idea/
