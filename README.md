@@ -22,4 +22,5 @@ Blender 4.2 or newer is required.
 
 ## License
 
-MIT. See [LICENSE](LICENSE). The vendored StanHull sources in `native/` are BSD-3 licensed (Open Dynamics Framework Group); see `native/LICENSE`.
+MIT. See [LICENSE](LICENSE). 
+StanHull source is BSD-3 licensed (Open Dynamics Framework Group);
