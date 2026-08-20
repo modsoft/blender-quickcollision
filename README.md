@@ -9,6 +9,7 @@ meshes can be parented to the source and kept in a separate collection.
 
 <img width="165" height="430" alt="image" src="https://github.com/user-attachments/assets/a450c914-7a87-4fab-aa92-1cf2b6e94933" />
 
+<img width="1310" height="556" alt="image" src="https://github.com/user-attachments/assets/d5d1569f-2a8e-4bd6-917d-fdb091f6d343" />
 
 
 ## Install
