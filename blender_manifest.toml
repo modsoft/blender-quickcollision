@@ -1,0 +1,26 @@
+schema_version = "1.0.0"
+
+id = "quickcollision"
+version = "0.1.0"
+name = "Quick Collision"
+tagline = "Create fitted colliders for game-engine export"
+maintainer = "Trey"
+type = "add-on"
+tags = ["3D View"]
+website = "https://github.com/modsoft/blender-quickcollision"
+
+blender_version_min = "4.2.0"
+
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+
+[build]
+paths_exclude_pattern = [
+  "__pycache__/",
+  ".*",
+  "tests/",
+  "*.blend",
+  "*.blend1",
+  "*.zip",
+]
