@@ -7,7 +7,7 @@ default.
 meshes can be parented to the source and kept in a separate collection.
 - Convex hulls are generated with an implementation of StanHull. Credit to Stan Melax and John Ratcliff for providing the open source code for convex hull generation.
 
-<img width="331" height="860" alt="image" src="https://github.com/user-attachments/assets/a450c914-7a87-4fab-aa92-1cf2b6e94933" />
+<img width="165" height="430" alt="image" src="https://github.com/user-attachments/assets/a450c914-7a87-4fab-aa92-1cf2b6e94933" />
 
 
 
