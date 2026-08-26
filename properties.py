@@ -92,6 +92,11 @@ class QuickCollisionPreferences(AddonPreferences):
         update=_update_wire_display,
         description="Show colliders as wireframe so they never hide the source mesh",
     )
+    compact_view: BoolProperty(
+        name="Compact View",
+        default=False,
+        description="Collapse collider types into a 3x3 icon grid",
+    )
 
     def draw(self, context):
         layout = self.layout
@@ -100,6 +105,7 @@ class QuickCollisionPreferences(AddonPreferences):
         row.prop(self, "use_collection")
         row.prop(self, "collection_name", text="")
         layout.prop(self, "wire_display")
+        layout.prop(self, "compact_view")
         layout.separator()
         layout.prop(self, "box_prefix")
         layout.prop(self, "sphere_prefix")

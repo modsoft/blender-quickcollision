@@ -6,85 +6,10 @@ from bpy.types import Operator
 
 from . import geometry, primitives
 from .constants import MAX_CONVEX_TRIS
+from .kinds import BY_ID, enum_items
 from .properties import prefs
 
-COLLIDER_TYPES = (
-    (
-        "BOX_WORLD",
-        "World Box",
-        "Create a world-aligned box collider",
-        "MESH_CUBE",
-        0,
-    ),
-    (
-        "BOX_TRANSFORM",
-        "Object Box",
-        "Create a box collider aligned to the source object's axes",
-        "ORIENTATION_LOCAL",
-        1,
-    ),
-    (
-        "BOX_EIGEN2",
-        "Fit Box 2-Axis",
-        "Create a box collider aligned to the primary axis of the selection",
-        "EMPTY_AXIS",
-        2,
-    ),
-    (
-        "BOX_EIGEN3",
-        "Fit Box 3-Axis",
-        "Create a box collider aligned to the shape of the selection",
-        "EMPTY_ARROWS",
-        3,
-    ),
-    (
-        "CAPSULE_WORLD",
-        "World Capsule",
-        "Create a world-aligned capsule collider",
-        "MESH_CAPSULE",
-        4,
-    ),
-    (
-        "CAPSULE_TRANSFORM",
-        "Object Capsule",
-        "Create a capsule collider aligned to the source object's axes",
-        "ORIENTATION_GIMBAL",
-        5,
-    ),
-    (
-        "CAPSULE_EIGEN",
-        "Fit Capsule",
-        "Create a capsule collider aligned to the shape of the selection",
-        "MOD_SIMPLEDEFORM",
-        6,
-    ),
-    (
-        "SPHERE",
-        "Sphere",
-        "Create a sphere collider from the selection center",
-        "MESH_UVSPHERE",
-        7,
-    ),
-    (
-        "CONVEX",
-        "Convex",
-        "Create a convex hull collider from the selection",
-        "MESH_ICOSPHERE",
-        8,
-    ),
-)
-
-_PREFIX_ATTR = {
-    "BOX_WORLD": "box_prefix",
-    "BOX_TRANSFORM": "box_prefix",
-    "BOX_EIGEN2": "box_prefix",
-    "BOX_EIGEN3": "box_prefix",
-    "CAPSULE_WORLD": "capsule_prefix",
-    "CAPSULE_TRANSFORM": "capsule_prefix",
-    "CAPSULE_EIGEN": "capsule_prefix",
-    "SPHERE": "sphere_prefix",
-    "CONVEX": "convex_prefix",
-}
+COLLIDER_TYPES = enum_items()
 
 
 class QUICKCOLLISION_OT_create(Operator):
@@ -104,8 +29,12 @@ class QUICKCOLLISION_OT_create(Operator):
 
     @classmethod
     def description(cls, context, properties):
-        lookup = {item[0]: item[2] for item in COLLIDER_TYPES}
-        return lookup.get(properties.collider_type, cls.bl_label)
+        kind = BY_ID.get(properties.collider_type)
+        if kind is None:
+            return cls.bl_label
+        if kind.tip:
+            return f"{kind.label}\n{kind.tip}"
+        return kind.label
 
     def execute(self, context):
         points = geometry.gather_points(context)
@@ -119,7 +48,7 @@ class QUICKCOLLISION_OT_create(Operator):
             return {"CANCELLED"}
 
         settings = prefs(context)
-        prefix = getattr(settings, _PREFIX_ATTR[self.collider_type])
+        prefix = getattr(settings, BY_ID[self.collider_type].prefix_attr)
         name = primitives.collider_name(prefix, source.name, settings.suffix)
 
         try:

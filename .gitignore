@@ -5,6 +5,7 @@ native/build/
 *.lib
 *.exp
 tests/
+icons/_src/
 *.blend1
 .DS_Store
 .idea/

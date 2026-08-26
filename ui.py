@@ -3,7 +3,8 @@
 import bpy
 from bpy.types import Panel
 
-from .operators import COLLIDER_TYPES
+from . import icons
+from .kinds import KINDS, family
 from .properties import prefs
 
 
@@ -15,11 +16,43 @@ def _settings(layout, context):
         return None
 
 
-def _draw_type_buttons(layout, types):
+def _compact_enabled(context):
+    try:
+        return prefs(context).compact_view
+    except RuntimeError:
+        return False
+
+
+def _draw_create_button(layout, kind, compact=False):
+    custom = icons.icon_id(kind.id)
+    op = layout.operator(
+        "quickcollision.create",
+        text=kind.compact if compact else kind.short,
+        icon_value=custom,
+        icon=kind.builtin_icon if custom == 0 else "NONE",
+    )
+    op.collider_type = kind.id
+
+
+def _draw_type_buttons(layout, kinds):
     column = layout.column(align=True)
-    for collider_type, label, _tip, icon, _idx in types:
-        op = column.operator("quickcollision.create", text=label, icon=icon)
-        op.collider_type = collider_type
+    for kind in kinds:
+        _draw_create_button(column, kind)
+
+
+def _draw_compact_grid(layout, settings):
+    grid = layout.grid_flow(
+        row_major=True,
+        columns=3,
+        even_columns=True,
+        even_rows=True,
+        align=True,
+    )
+    for kind in KINDS:
+        _draw_create_button(grid, kind, compact=True)
+    column = layout.column(align=True)
+    column.prop(settings, "convex_max_verts")
+    column.prop(settings, "convex_skin_width")
 
 
 def _draw_prefix(layout, settings, attr):
@@ -36,11 +69,12 @@ class QUICKCOLLISION_PT_main(Panel):
     bl_category = "Quick Collision"
 
     def draw(self, context):
-        # Sections are sub-panels; the body only reports a bad enable state.
-        try:
-            prefs(context)
-        except RuntimeError:
-            self.layout.label(text="Reload Quick Collision to finish enabling.")
+        layout = self.layout
+        settings = _settings(layout, context)
+        if settings is None:
+            return
+        if settings.compact_view:
+            _draw_compact_grid(layout, settings)
 
 
 class _SectionPanel:
@@ -50,7 +84,13 @@ class _SectionPanel:
     bl_parent_id = "QUICKCOLLISION_PT_main"
 
 
-class QUICKCOLLISION_PT_box(_SectionPanel, Panel):
+class _ExpandedSection(_SectionPanel):
+    @classmethod
+    def poll(cls, context):
+        return not _compact_enabled(context)
+
+
+class QUICKCOLLISION_PT_box(_ExpandedSection, Panel):
     bl_label = "Box"
     bl_idname = "QUICKCOLLISION_PT_box"
 
@@ -60,11 +100,11 @@ class QUICKCOLLISION_PT_box(_SectionPanel, Panel):
         if settings is None:
             return
         box = layout.box()
-        _draw_type_buttons(box, COLLIDER_TYPES[0:4])
+        _draw_type_buttons(box, family("box"))
         _draw_prefix(box, settings, "box_prefix")
 
 
-class QUICKCOLLISION_PT_capsule(_SectionPanel, Panel):
+class QUICKCOLLISION_PT_capsule(_ExpandedSection, Panel):
     bl_label = "Capsule"
     bl_idname = "QUICKCOLLISION_PT_capsule"
 
@@ -74,11 +114,11 @@ class QUICKCOLLISION_PT_capsule(_SectionPanel, Panel):
         if settings is None:
             return
         box = layout.box()
-        _draw_type_buttons(box, COLLIDER_TYPES[4:7])
+        _draw_type_buttons(box, family("capsule"))
         _draw_prefix(box, settings, "capsule_prefix")
 
 
-class QUICKCOLLISION_PT_sphere(_SectionPanel, Panel):
+class QUICKCOLLISION_PT_sphere(_ExpandedSection, Panel):
     bl_label = "Sphere"
     bl_idname = "QUICKCOLLISION_PT_sphere"
 
@@ -88,11 +128,11 @@ class QUICKCOLLISION_PT_sphere(_SectionPanel, Panel):
         if settings is None:
             return
         box = layout.box()
-        _draw_type_buttons(box, COLLIDER_TYPES[7:8])
+        _draw_type_buttons(box, family("sphere"))
         _draw_prefix(box, settings, "sphere_prefix")
 
 
-class QUICKCOLLISION_PT_convex(_SectionPanel, Panel):
+class QUICKCOLLISION_PT_convex(_ExpandedSection, Panel):
     bl_label = "Convex"
     bl_idname = "QUICKCOLLISION_PT_convex"
 
@@ -102,7 +142,7 @@ class QUICKCOLLISION_PT_convex(_SectionPanel, Panel):
         if settings is None:
             return
         box = layout.box()
-        _draw_type_buttons(box, COLLIDER_TYPES[8:9])
+        _draw_type_buttons(box, family("convex"))
         column = box.column(align=True)
         column.prop(settings, "convex_max_verts")
         column.prop(settings, "convex_skin_width")
@@ -120,6 +160,7 @@ class QUICKCOLLISION_PT_settings(_SectionPanel, Panel):
         if settings is None:
             return
         box = layout.box()
+        box.prop(settings, "compact_view")
         box.prop(settings, "parent_to_source")
         row = box.row(align=True)
         row.prop(settings, "use_collection")
@@ -128,6 +169,12 @@ class QUICKCOLLISION_PT_settings(_SectionPanel, Panel):
         sub.prop(settings, "collection_name", text="")
         box.prop(settings, "wire_display")
         box.prop(settings, "suffix", text="Suffix")
+        if settings.compact_view:
+            box.separator()
+            box.prop(settings, "box_prefix", text="Box")
+            box.prop(settings, "capsule_prefix", text="Capsule")
+            box.prop(settings, "sphere_prefix", text="Sphere")
+            box.prop(settings, "convex_prefix", text="Convex")
 
 
 classes = (

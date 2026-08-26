@@ -16,9 +16,12 @@ import os
 import re
 
 from . import constants
+from . import kinds
 from . import stanhull
+from . import hull
 from . import geometry
 from . import primitives
+from . import icons
 from . import operators
 from . import properties
 from . import ui
@@ -29,9 +32,12 @@ DEV_RELOAD = True
 
 _support = (
     constants,
+    kinds,
     stanhull,
+    hull,
     geometry,
     primitives,
+    icons,
 )
 
 _modules = (
@@ -75,6 +81,7 @@ def register():
     if DEV_RELOAD:
         _reload()
     _check_manifest_version()
+    icons.register()
     for mod in _modules:
         mod.register()
 
@@ -82,3 +89,4 @@ def register():
 def unregister():
     for mod in reversed(_modules):
         mod.unregister()
+    icons.unregister()
