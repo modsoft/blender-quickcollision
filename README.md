@@ -8,7 +8,7 @@ Quickly generate game engine compliant collision meshes.
 
 - **Convex generation generated with an implementation of StanHull** — Stan Melax's approximating hull algorithm from the PhysX toolchain. (Credit to Stan Melax and John Ratcliff.)
 
-<img width="180" height="460" alt="image" src="https://github.com/user-attachments/assets/bbb4aa74-cd98-4b3e-8c26-471230ab3453" />
+<img width="220" height="598" alt="image" src="https://github.com/user-attachments/assets/696eb335-169b-4e39-8e28-e350fb7502b5" />
 
 <img width="660" height="279" alt="image" src="https://github.com/user-attachments/assets/d5d1569f-2a8e-4bd6-917d-fdb091f6d343" />
 
