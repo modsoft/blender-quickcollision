@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from math import atan2, cos, sin
 from mathutils import Matrix, Vector

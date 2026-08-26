@@ -6,11 +6,17 @@
 
 #include <cstring>
 
+#if defined(_WIN32)
+#define STANHULL_API __declspec(dllexport)
+#else
+#define STANHULL_API __attribute__((visibility("default")))
+#endif
+
 extern "C" {
 
 // Builds a simplified convex hull from an xyz float array.
 // Returns 0 on success. Output arrays must be released with stanhull_free.
-__declspec(dllexport) int stanhull_build(
+STANHULL_API int stanhull_build(
     const float *points,
     unsigned int point_count,
     unsigned int max_verts,
@@ -65,7 +71,7 @@ __declspec(dllexport) int stanhull_build(
     return 0;
 }
 
-__declspec(dllexport) void stanhull_free(float *verts, unsigned int *tris)
+STANHULL_API void stanhull_free(float *verts, unsigned int *tris)
 {
     delete[] verts;
     delete[] tris;

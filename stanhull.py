@@ -1,10 +1,11 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: GPL-3.0-or-later
 
-"""ctypes bridge to the vendored StanHull DLL (see native/).
+"""ctypes bridge to the vendored StanHull library (see native/).
 
 StanHull builds an approximating convex hull with a vertex budget,
-unlike Blender's exact hull. When the DLL is missing (unbuilt checkout
-or non-Windows platform) callers fall back to bmesh.ops.convex_hull.
+unlike Blender's exact hull. When the platform binary is missing
+(unbuilt checkout or unsupported arch) callers fall back to
+bmesh.ops.convex_hull.
 """
 
 import ctypes
@@ -13,6 +14,8 @@ import platform
 
 _DLL_NAMES = {
     ("Windows", "AMD64"): "stanhull-win64.dll",
+    ("Linux", "x86_64"): "stanhull-linux64.so",
+    ("Linux", "AMD64"): "stanhull-linux64.so",
 }
 
 _dll = None

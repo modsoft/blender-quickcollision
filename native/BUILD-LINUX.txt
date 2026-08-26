@@ -1,0 +1,15 @@
+StanHull Linux x64 build
+========================
+
+1. sudo apt update && sudo apt install -y g++
+2. chmod +x build.sh
+3. ./build.sh
+
+That writes stanhull-linux64.so next to this script (or into the
+add-on root if you unzipped this as native/ inside the add-on).
+
+Copy stanhull-linux64.so next to stanhull.py in the add-on folder.
+Convex then uses StanHull; without the .so it falls back to Blender's
+exact hull.
+
+This is x86_64 only. Check with: uname -m

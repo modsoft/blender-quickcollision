@@ -1,0 +1,19 @@
+Third-party and asset notices
+=============================
+
+This add-on's Python code is GNU GPL v3 or later. See LICENSE.
+
+StanHull (native/stanhull.cpp, native/stanhull.h, stanhull-win64.dll, stanhull-linux64.so)
+  SPDX: BSD-3-Clause
+  Copyright (c) 2004 Open Dynamics Framework Group
+  Full text: native/LICENSE
+
+C API wrapper (native/stanhull_capi.cpp)
+  SPDX: MIT
+  Copyright (c) 2026 Trey
+  Linked into stanhull-win64.dll and stanhull-linux64.so. Those binaries are BSD-3 + MIT, not GPL.
+  The add-on loads them at runtime via ctypes (stanhull.py).
+
+Icons (icons/*.png)
+  SPDX: CC0-1.0
+  Dedicated to the public domain. See icons/LICENSE.

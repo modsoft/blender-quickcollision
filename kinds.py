@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 """Collider kinds: one catalog for the operator enum, UI copy, prefixes, and icons."""
 

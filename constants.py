@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 MAT_NAME = "QC_Collider"
 COLOR = (0.189, 0.5, 0.05, 0.5)

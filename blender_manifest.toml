@@ -11,8 +11,17 @@ website = "https://github.com/modsoft/blender-quickcollision"
 
 blender_version_min = "4.2.0"
 
+copyright = [
+  "2026 Trey",
+  "2004 Open Dynamics Framework Group (StanHull)",
+]
+
+# Add-on Python: GPL-3.0-or-later. StanHull native/DLL: BSD-3-Clause. Icons: CC0-1.0.
+# See NOTICE and native/LICENSE.
 license = [
-  "SPDX:MIT",
+  "SPDX:GPL-3.0-or-later",
+  "SPDX:BSD-3-Clause",
+  "SPDX:CC0-1.0",
 ]
 
 [build]
@@ -20,7 +29,8 @@ paths_exclude_pattern = [
   "__pycache__/",
   ".*",
   "tests/",
-  "native/",
+  "native/build/",
+  "icons/_src/",
   "*.blend",
   "*.blend1",
   "*.zip",

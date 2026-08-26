@@ -22,5 +22,7 @@ Blender 4.2 or newer is required.
 
 ## License
 
-MIT. See [LICENSE](LICENSE). 
-StanHull source is BSD-3 licensed (Open Dynamics Framework Group);
+The add-on (Python) is **GPL-3.0-or-later**. See [LICENSE](LICENSE).
+
+- **StanHull** (`native/`, `stanhull-win64.dll`, `stanhull-linux64.so`): BSD-3-Clause. See [native/LICENSE](native/LICENSE) and [NOTICE](NOTICE).
+- **Icons** (`icons/*.png`): [CC0 1.0](icons/LICENSE).

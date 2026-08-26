@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 """Custom UI icons. Drop replacement 64x64 RGBA PNGs into icons/ using the same filenames."""
 

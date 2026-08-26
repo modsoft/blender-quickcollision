@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 """Convex hull: points in, local mesh out. StanHull and bmesh are adapters."""
 
