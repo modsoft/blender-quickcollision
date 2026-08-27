@@ -7,6 +7,7 @@ native/build/
 tests/
 icons/_src/
 *.blend1
+*.zip
 .DS_Store
 .idea/
 .vscode/

@@ -11,6 +11,10 @@ bl_info = {
     "category": "3D View",
 }
 
+# Blender deletes module.bl_info when this is loaded as an extension, then
+# calls register(). Keep a copy for the manifest version check.
+_BL_INFO = dict(bl_info)
+
 import importlib
 import os
 import re
@@ -62,8 +66,8 @@ def _check_manifest_version():
         return
 
     for key, expected in (
-        ("version", ".".join(str(part) for part in bl_info["version"])),
-        ("blender_version_min", ".".join(str(part) for part in bl_info["blender"])),
+        ("version", ".".join(str(part) for part in _BL_INFO["version"])),
+        ("blender_version_min", ".".join(str(part) for part in _BL_INFO["blender"])),
     ):
         match = re.search(rf'^{key}\s*=\s*"([^"]+)"', text, re.MULTILINE)
         if match and match.group(1) != expected:
