@@ -15,26 +15,13 @@ bl_info = {
 # calls register(). Keep a copy for the manifest version check.
 _BL_INFO = dict(bl_info)
 
-import importlib
+_needs_reload = "bpy" in locals()
+
 import os
 import re
 
-from . import constants
-from . import kinds
-from . import stanhull
-from . import hull
-from . import geometry
-from . import primitives
-from . import icons
-from . import operators
-from . import properties
-from . import ui
-
-# Re-import submodules on enable so toggling the add-on picks up edits.
-# Turn this off for a release build.
-DEV_RELOAD = True
-
-_support = (
+import bpy
+from . import (
     constants,
     kinds,
     stanhull,
@@ -42,18 +29,31 @@ _support = (
     geometry,
     primitives,
     icons,
+    operators,
+    properties,
+    ui,
 )
+
+if _needs_reload:
+    import importlib
+
+    constants = importlib.reload(constants)
+    kinds = importlib.reload(kinds)
+    stanhull = importlib.reload(stanhull)
+    hull = importlib.reload(hull)
+    geometry = importlib.reload(geometry)
+    primitives = importlib.reload(primitives)
+    icons = importlib.reload(icons)
+    operators = importlib.reload(operators)
+    properties = importlib.reload(properties)
+    ui = importlib.reload(ui)
+    print("Quick Collision reloaded")
 
 _modules = (
     properties,
     operators,
     ui,
 )
-
-
-def _reload():
-    for mod in _support + _modules:
-        importlib.reload(mod)
 
 
 def _check_manifest_version():
@@ -82,8 +82,6 @@ def register():
         unregister()
     except Exception:
         pass
-    if DEV_RELOAD:
-        _reload()
     _check_manifest_version()
     icons.register()
     for mod in _modules:
