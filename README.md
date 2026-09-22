@@ -18,6 +18,11 @@ Quickly generate game engine compliant collision meshes.
 <img width="1366" height="768" alt="previews_02" src="https://github.com/user-attachments/assets/c8b122b6-7d2a-4d81-aa4f-36b6df841411" />
 
 
+- **Compact UI Mode** `Settings > Compact View`
+
+<img width="318" height="233" alt="image" src="https://github.com/user-attachments/assets/1f4c0e04-99cc-41f7-ad47-978046e728d6" />
+
+
 ## Install
 
 Blender 4.2 or newer.
