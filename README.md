@@ -22,6 +22,8 @@ Quickly generate game engine compliant collision meshes.
 
 Blender 4.2 or newer.
 
+Check Releases or Code > Download Zip for latest.
+
 Drag the zip onto Blender, or install from **Edit → Preferences → Get Extensions → Install from Disk**.
 The tools are in the **Quick Collision** tab of the 3D Viewport sidebar.
 
